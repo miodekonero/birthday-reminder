@@ -1,0 +1,180 @@
+:root {
+  --background-color: #0f0f0f;
+  --header-color: #151515;
+  --footer-color: #0c0c0c;
+  --gradient-color-1: #00d3ff;
+  --gradient-color-2: #001eff;
+  --text-color: #dadada;
+  --selected-text-color: #aaa;
+  --gradient: linear-gradient(to right, var(--gradient-color-1) 0%, var(--gradient-color-2) 100%);
+  --monospace-font: "Consolas"
+}
+
+/*----------------*/
+/*--- Backbone ---*/
+/*----------------*/
+
+body {
+  margin: 0;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  user-select: none;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  font-family: var(--monospace-font), monospace;
+  font-weight: 200;
+  font-size: 15px;
+}
+main {
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+html { height: 100% }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/*--------------*/
+/*--- Header ---*/
+/*--------------*/
+
+header {
+  width: auto;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr 1fr;
+  background-color: var(--header-color);
+  padding: 5px;
+  border-style: solid;
+  border-image: var(--gradient) 1;
+  border-width: 0;
+  border-bottom-width: 3px;
+  flex: 0 1 auto;
+  text-wrap: nowrap;
+  z-index: 9999;
+}
+header > p { margin: 0; }
+header > p#add-button { justify-self: left}
+header > p#date-display { justify-self: center }
+header > p#close-button { justify-self: right}
+header > p#add-button:hover, header > p#close-button:hover { color: var(--selected-text-color); cursor: pointer }
+
+/*--------------*/
+/*--- Footer ---*/
+/*--------------*/
+
+footer {
+  width: auto;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr;
+  flex: 0 1 auto;
+  background-color: var(--footer-color);
+}
+footer > p {
+  justify-self: center;
+  margin: 0;
+}
+footer > p:hover {
+  cursor: pointer;
+  color: var(--selected-text-color)
+}
+
+footer p.selected {
+  background-image: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: rgba(0,0,0,0);
+  text-decoration: none;
+  cursor: default;
+}
+
+/*--------------*/
+/*--- Dialog ---*/
+/*--------------*/
+
+dialog {
+  border-style: solid;
+  border-image: var(--gradient) 1;
+  border-width: 3px;
+  background-color: var(--header-color);
+  color: var(--text-color);
+  font-size: 14px;
+  width: 160px;
+  height: 80px;
+  z-index: 100;
+  padding: 8px;
+}
+dialog #dialog-button {
+  margin: 0;
+  cursor: pointer;
+}
+dialog #dialog-button:hover {
+  color: var(--gradient-color-2)
+}
+dialog input {
+  border: none;
+  background: none;
+  color: var(--selected-text-color);
+  font: var(--monospace-font);
+  margin: 0;
+  padding: 0;
+  width: 100px;
+}
+dialog input:focus {
+  outline: none;
+  text-decoration: none;
+}
+dialog label, dialog input {
+  margin-bottom: 3px;
+}
+dialog p#dialog-button {
+  width: fit-content;
+  margin: 10px auto 0 auto;
+}
+dialog p#dialog-button:hover {
+  color: var(--selected-text-color)
+}
+body section#calendar.blurry, body footer.blurry {
+  filter: blur(1px);
+  pointer-events: none;
+}
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
+/*----------------*/
+/*--- Calendar ---*/
+/*----------------*/
+
+#calendar td {
+  text-align: center;
+  padding: 2px;
+}
+#calendar td.highlight {
+  background-color: var(--text-color);
+  color: var(--background-color);
+  border-radius: 100px;
+}
+#calendar td.gradient {
+  background-image: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: rgba(0,0,0,0);
+  cursor: pointer;
+}
+#calendar td.gradient-highlight {
+  background-image: var(--gradient);
+  border-radius: 100px;
+  cursor: pointer;
+}
+#calendar td.weekend {
+  color: var(--selected-text-color)
+}

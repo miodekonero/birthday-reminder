@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Birthday reminder</title>
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+  <body>
+    <header id="title-bar">
+      <p id="add-button">[+]</p>
+      <p id="date-display"></p>
+      <p id="close-button">[x]</p>
+    </header>
+    <main id="main">
+      <section id="calendar"></section>
+      <dialog id="dialog">
+        <label for="dialog-name">Name:</label>
+        <input id="dialog-name" type="text" placeholder="Type here..">
+        <br>
+        <label for="dialog-date">Date:</label>
+        <input id="dialog-date" type="date">
+        <p id="dialog-button">[Submit]</p>
+      </dialog>
+    </main>
+    <footer id="footer">
+      <p id="this-month-button" class="selected">This month</p>
+      <p id="next-month-button">Next month</p>
+    </footer>
+  </body>
+</html>
