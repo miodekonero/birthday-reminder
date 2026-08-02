@@ -56,13 +56,12 @@ header {
   border-bottom-width: 3px;
   flex: 0 1 auto;
   text-wrap: nowrap;
-  z-index: 9999;
 }
-header > p { margin: 0; }
-header > p#add-button { justify-self: left}
-header > p#date-display { justify-self: center }
-header > p#close-button { justify-self: right}
-header > p#add-button:hover, header > p#close-button:hover { color: var(--selected-text-color); cursor: pointer }
+header > p#date-display { justify-self: center; margin: 0 }
+header > button#add-button { justify-self: left}
+header > button#close-button { justify-self: right}
+header > button:hover { color: var(--selected-text-color); cursor: pointer }
+header > button { background: none; color: var(--text-color); border: none; font-family: inherit; font-size: inherit; padding: 0}
 
 /*--------------*/
 /*--- Footer ---*/
