@@ -1,28 +1,27 @@
 // todo dialog for showing birthdays in a given day
-// todo just general code cleanup its very messy right now
 // todo error handling.. lots of it
 // todo get better at TypeScript..
 
-import * as dom from "./dom.ts";
+import * as Dom from "./dom.ts";
 import { getDaysInMonth, calculateOffset, months } from "./date.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const window = getCurrentWindow();
 
 function toggleDialog() {
-    dom.dialog.open ? dom.dialog.close() : dom.dialog.show();
-    dom.calendar.classList.toggle("blurry");
-    dom.footer.classList.toggle("blurry");
+    Dom.Dialog.dialog.open ? Dom.Dialog.dialog.close() : Dom.Dialog.dialog.show();
+    Dom.calendar.classList.toggle("blurry");
+    Dom.Footer.footer.classList.toggle("blurry");
 }
 
 function registerBirthday() {
-    if (!dom.dialog_name.value || !dom.dialog_date.value) {
+    if (!Dom.Dialog.name_input.value || !Dom.Dialog.date_input.value) {
         void displayNotification("Incomplete...")
         return;
     }
     saveBirthday();
-    dom.dialog_name.value = "";
-    dom.dialog_date.value = "";
+    Dom.Dialog.name_input.value = "";
+    Dom.Dialog.date_input.value = "";
     void displayNotification("Saved!");
 }
 
@@ -34,22 +33,22 @@ function saveBirthday() {
     // todo
 }
 
-function updateTitle(): void {
+function updateHeader(): void {
     const date = new Date()
-    dom.date_display.innerHTML = months[date.getMonth()] + " " + date.getDate();
+    Dom.Header.title.innerHTML = months[date.getMonth()] + " " + date.getDate();
 }
 
-async function displayNotification(text: string) {
-    dom.date_display.innerHTML = text;
+async function displayNotification(text: string) {  // todo deal with this being a bit wonky
+    Dom.Header.title.innerHTML = text;
     await new Promise(r => setTimeout(r, 2000));
-    updateTitle();
+    updateHeader();
 }
 
-function update(date: Date, show_next_month?: boolean): void {
+function renderCalendar(date: Date, show_next_month?: boolean): void {
     if (show_next_month) { date.setMonth(date.getMonth()+1) }
     getBirthdays();
     const offset = calculateOffset(date);
-    while (dom.calendar.firstChild) { dom.calendar.removeChild(dom.calendar.firstChild) }
+    while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     let row = document.createElement("tr");
     for (let index = 0; index < offset; index++) { row.append(document.createElement("td")) }
     for (let index = 1; index <= getDaysInMonth(date); index++) {
@@ -64,31 +63,31 @@ function update(date: Date, show_next_month?: boolean): void {
         }
         row.append(cell);  // todo marking the date on birthday
         if ((offset + index) % 7 === 0) {
-            dom.calendar.append(row);
+            Dom.calendar.append(row);
             row = document.createElement("tr");
         }
     }
-    if (row.children) { dom.calendar.append(row) }
+    if (row.children) { Dom.calendar.append(row) }
 }
 
 function switchMonthSelection(button: HTMLElement): void {
-    update(new Date, button === dom.next_month_button)
+    renderCalendar(new Date, button === Dom.Footer.next_month_button)
     if (button.classList.contains("selected")) { return }
-    dom.this_month_button.classList.toggle("selected")
-    dom.next_month_button.classList.toggle("selected")
+    Dom.Footer.this_month_button.classList.toggle("selected")
+    Dom.Footer.next_month_button.classList.toggle("selected")
 }
 
-dom.close_button.addEventListener("click", window.close);
-dom.add_button.addEventListener("click", toggleDialog);
-dom.this_month_button.addEventListener("click", () => {switchMonthSelection(dom.this_month_button)})
-dom.next_month_button.addEventListener("click", () => {switchMonthSelection(dom.next_month_button)})
-dom.dialog_button.addEventListener("click", registerBirthday)
+Dom.Header.close_button.addEventListener("click", window.close);
+Dom.Header.add_button.addEventListener("click", toggleDialog);
+Dom.Footer.this_month_button.addEventListener("click", () => {switchMonthSelection(Dom.Footer.this_month_button)})
+Dom.Footer.next_month_button.addEventListener("click", () => {switchMonthSelection(Dom.Footer.next_month_button)})
+Dom.Dialog.submit_button.addEventListener("click", registerBirthday)
 
-dom.header.addEventListener("mousedown", (event) => {
-    if (event.buttons === 1 && !dom.close_button.matches(":hover") && !dom.add_button.matches(":hover")) {
+Dom.Header.header.addEventListener("mousedown", (event) => {
+    if (event.buttons === 1 && !Dom.Header.close_button.matches(":hover") && !Dom.Header.add_button.matches(":hover")) {
         window.startDragging().catch((reason) => { console.error(reason) });
     }
 });
 
-switchMonthSelection(dom.this_month_button)
-updateTitle()
+switchMonthSelection(Dom.Footer.this_month_button)
+updateHeader()
