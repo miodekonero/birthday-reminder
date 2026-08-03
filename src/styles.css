@@ -89,7 +89,6 @@ footer button:hover {
   cursor: pointer;
   color: var(--selected-text-color)
 }
-
 footer button.selected {
   background-image: var(--gradient);
   -webkit-background-clip: text;
@@ -145,7 +144,6 @@ dialog button:hover {
   color: var(--selected-text-color);
   cursor: pointer
 }
-
 body section#calendar.blurry, body footer.blurry {
   filter: blur(1px);
   pointer-events: none;

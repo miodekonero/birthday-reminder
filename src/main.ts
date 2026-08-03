@@ -8,6 +8,12 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const window = getCurrentWindow();
 
+function dragWindow(event: MouseEvent) {
+    if (event.buttons === 1 && !Dom.Header.close_button.matches(":hover") && !Dom.Header.add_button.matches(":hover")) {
+        window.startDragging().catch((reason) => { console.error(reason) });
+    }
+}
+
 function toggleDialog() {
     Dom.Dialog.dialog.open ? Dom.Dialog.dialog.close() : Dom.Dialog.dialog.show();
     Dom.calendar.classList.toggle("blurry");
@@ -70,24 +76,19 @@ function renderCalendar(date: Date, show_next_month?: boolean): void {
     if (row.children) { Dom.calendar.append(row) }
 }
 
-function switchMonthSelection(button: HTMLElement): void {
-    renderCalendar(new Date, button === Dom.Footer.next_month_button)
-    if (button.classList.contains("selected")) { return }
+function switchMonthSelection(this: HTMLButtonElement): void {
+    renderCalendar(new Date, this === Dom.Footer.next_month_button)
+    if (this.classList.contains("selected")) { return }
     Dom.Footer.this_month_button.classList.toggle("selected")
     Dom.Footer.next_month_button.classList.toggle("selected")
 }
 
-Dom.Header.close_button.addEventListener("click", window.close);
-Dom.Header.add_button.addEventListener("click", toggleDialog);
-Dom.Footer.this_month_button.addEventListener("click", () => {switchMonthSelection(Dom.Footer.this_month_button)})
-Dom.Footer.next_month_button.addEventListener("click", () => {switchMonthSelection(Dom.Footer.next_month_button)})
-Dom.Dialog.submit_button.addEventListener("click", registerBirthday)
+Dom.Header.header           .addEventListener("mousedown", dragWindow)
+Dom.Header.close_button     .addEventListener("click", window.close);
+Dom.Header.add_button       .addEventListener("click", toggleDialog);
+Dom.Footer.this_month_button.addEventListener("click", switchMonthSelection)
+Dom.Footer.next_month_button.addEventListener("click", switchMonthSelection)
+Dom.Dialog.submit_button    .addEventListener("click", registerBirthday)
 
-Dom.Header.header.addEventListener("mousedown", (event) => {
-    if (event.buttons === 1 && !Dom.Header.close_button.matches(":hover") && !Dom.Header.add_button.matches(":hover")) {
-        window.startDragging().catch((reason) => { console.error(reason) });
-    }
-});
-
-switchMonthSelection(Dom.Footer.this_month_button)
+renderCalendar(new Date(), false)
 updateHeader()
