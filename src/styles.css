@@ -57,11 +57,11 @@ header {
   flex: 0 1 auto;
   text-wrap: nowrap;
 }
-header > p#date-display { justify-self: center; margin: 0 }
-header > button#add-button { justify-self: left}
-header > button#close-button { justify-self: right}
-header > button:hover { color: var(--selected-text-color); cursor: pointer }
-header > button { background: none; color: var(--text-color); border: none; font-family: inherit; font-size: inherit; padding: 0}
+header p#date-display { justify-self: center; margin: 0 }
+header button#add-button { justify-self: left}
+header button#close-button { justify-self: right}
+header button:hover { color: var(--selected-text-color); cursor: pointer }
+header button { background: none; color: var(--text-color); border: none; font-family: inherit; font-size: inherit; padding: 0}
 
 /*--------------*/
 /*--- Footer ---*/
@@ -75,16 +75,22 @@ footer {
   flex: 0 1 auto;
   background-color: var(--footer-color);
 }
-footer > p {
+footer button {
   justify-self: center;
   margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  color: var(--text-color);
+  text-wrap: nowrap;
+  border: none;
 }
-footer > p:hover {
+footer button:hover {
   cursor: pointer;
   color: var(--selected-text-color)
 }
 
-footer p.selected {
+footer button.selected {
   background-image: var(--gradient);
   -webkit-background-clip: text;
   background-clip: text;
@@ -109,13 +115,6 @@ dialog {
   z-index: 100;
   padding: 8px;
 }
-dialog #dialog-button {
-  margin: 0;
-  cursor: pointer;
-}
-dialog #dialog-button:hover {
-  color: var(--gradient-color-2)
-}
 dialog input {
   border: none;
   background: none;
@@ -132,13 +131,21 @@ dialog input:focus {
 dialog label, dialog input {
   margin-bottom: 3px;
 }
-dialog p#dialog-button {
-  width: fit-content;
+dialog button {
+  background: none;
+  color: var(--text-color);
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
   margin: 10px auto 0 auto;
+  display: block
 }
-dialog p#dialog-button:hover {
-  color: var(--selected-text-color)
+dialog button:hover {
+  color: var(--selected-text-color);
+  cursor: pointer
 }
+
 body section#calendar.blurry, body footer.blurry {
   filter: blur(1px);
   pointer-events: none;
