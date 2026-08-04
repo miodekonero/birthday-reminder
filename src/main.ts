@@ -7,7 +7,30 @@ import { getDaysInMonth, calculateOffset, months } from "./date.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const window = getCurrentWindow();
-let global_notif_promise: Promise<unknown> = new Promise(() => {});
+let last_date = new Date;
+
+namespace HeaderInterface {
+    const notification_time = 1500;
+    let last_notification = new Promise(() => {});
+
+    export function set(text: string): void {
+        Dom.Header.title.innerHTML = text;
+    }
+
+    export function reset(): void {
+        set(months[last_date.getMonth()] + " " + last_date.getDate());
+    }
+
+    export async function notify(text: string): Promise<void> {
+        const notification = new Promise(_ => setTimeout(_, notification_time));
+        set(text);
+        last_notification = notification;
+        await notification;
+        if (last_notification === notification) {
+            reset();
+        }
+    }
+}
 
 function dragWindow(event: MouseEvent): void {
     if (event.buttons === 1 && !Dom.Header.close_button.matches(":hover") && !Dom.Header.add_button.matches(":hover")) {
@@ -23,56 +46,40 @@ function toggleDialog(): void {
 
 function registerBirthday(): void {
     if (!Dom.Dialog.name_input.value || !Dom.Dialog.date_input.value) {
-        void displayNotification("Incomplete...")
+        void HeaderInterface.notify("Invalid...")
         return;
     }
-    saveBirthday();
     Dom.Dialog.name_input.value = "";
     Dom.Dialog.date_input.value = "";
-    void displayNotification("Saved!");
-}
-
-function getBirthdays(): void {
+    void HeaderInterface.notify("Saved!");
     // todo
 }
 
-function saveBirthday(): void {
-    // todo
-}
-
-function updateHeader(): void {
-    const date = new Date()
-    Dom.Header.title.innerHTML = months[date.getMonth()] + " " + date.getDate();
-}
-
-async function displayNotification(text: string): Promise<void> {
-    Dom.Header.title.innerHTML = text;
-    const local_notif_promise = new Promise(r => setTimeout(r, 1500));
-    global_notif_promise = local_notif_promise;
-    await local_notif_promise;
-    if (global_notif_promise === local_notif_promise) {  // checking if the function "owns" the notification
-        updateHeader()                                   // to avoid the title bar flashing when spamming notifications
-    }
-}
-
-function renderCalendar(date: Date, show_next_month?: boolean): void {
-    if (show_next_month) { date.setMonth(date.getMonth()+1) }
-    getBirthdays();
-    const offset = calculateOffset(date);
+function renderCalendar(show_next_month?: boolean): void {
+    last_date = new Date;
+    if (show_next_month) { last_date.setMonth(last_date.getMonth()+1) }
+    const offset = calculateOffset(last_date);
     while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     let row = document.createElement("tr");
     for (let index = 0; index < offset; index++) { row.append(document.createElement("td")) }
-    for (let index = 1; index <= getDaysInMonth(date); index++) {
+    for (let index = 1; index <= getDaysInMonth(last_date); index++) {
         let cell = document.createElement("td");
         cell.innerHTML = index.toString();
-        cell.id = "date-" + index.toString();
         if (((offset + index - 1) % 7) > 4) {
             cell.classList.add("weekend")
         }
-        if (!show_next_month && date.getDate() == index) {
-            cell.classList.add("highlight")
+        const is_today = !show_next_month && last_date.getDate() == index;
+        const birthdays = [];  // todo
+        if (birthdays.length) {
+            cell.addEventListener("mouseover", () => HeaderInterface.set("TODO"));  // todo
+            cell.addEventListener("mouseleave", HeaderInterface.reset);
         }
-        row.append(cell);  // todo marking the date on birthday
+
+        if (is_today && birthdays.length) { cell.classList.add("highlight-gradient") }
+        else if (is_today) { cell.classList.add("highlight") }
+        else if (birthdays.length) { cell.classList.add("gradient") }
+
+        row.append(cell);
         if ((offset + index) % 7 === 0) {
             Dom.calendar.append(row);
             row = document.createElement("tr");
@@ -82,8 +89,8 @@ function renderCalendar(date: Date, show_next_month?: boolean): void {
 }
 
 function switchMonthSelection(this: HTMLButtonElement): void {
-    renderCalendar(new Date, this === Dom.Footer.next_month_button)
     if (this.classList.contains("selected")) { return }
+    renderCalendar(this === Dom.Footer.next_month_button)
     Dom.Footer.this_month_button.classList.toggle("selected")
     Dom.Footer.next_month_button.classList.toggle("selected")
 }
@@ -95,5 +102,5 @@ Dom.Footer.this_month_button.addEventListener("click", switchMonthSelection)
 Dom.Footer.next_month_button.addEventListener("click", switchMonthSelection)
 Dom.Dialog.submit_button    .addEventListener("click", registerBirthday)
 
-renderCalendar(new Date(), false)
-updateHeader()
+renderCalendar()
+HeaderInterface.reset()

@@ -161,24 +161,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 #calendar td {
   text-align: center;
   padding: 2px;
-}
-#calendar td.highlight {
-  background-color: var(--text-color);
-  color: var(--background-color);
   border-radius: 100px;
+}
+#calendar td.weekend {
+  color: var(--selected-text-color)
 }
 #calendar td.gradient {
   background-image: var(--gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: rgba(0,0,0,0);
-  cursor: pointer;
 }
-#calendar td.gradient-highlight {
-  background-image: var(--gradient);
-  border-radius: 100px;
-  cursor: pointer;
+#calendar td.highlight {
+  background-color: var(--text-color);
+  color: var(--background-color);
 }
-#calendar td.weekend {
-  color: var(--selected-text-color)
+#calendar td.highlight-gradient {
+  background: var(--gradient);
+  color: var(--text-color);
 }
