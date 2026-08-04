@@ -7,20 +7,21 @@ import { getDaysInMonth, calculateOffset, months } from "./date.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const window = getCurrentWindow();
+let global_notif_promise: Promise<unknown> = new Promise(() => {});
 
-function dragWindow(event: MouseEvent) {
+function dragWindow(event: MouseEvent): void {
     if (event.buttons === 1 && !Dom.Header.close_button.matches(":hover") && !Dom.Header.add_button.matches(":hover")) {
         window.startDragging().catch((reason) => { console.error(reason) });
     }
 }
 
-function toggleDialog() {
+function toggleDialog(): void {
     Dom.Dialog.dialog.open ? Dom.Dialog.dialog.close() : Dom.Dialog.dialog.show();
     Dom.calendar.classList.toggle("blurry");
     Dom.Footer.footer.classList.toggle("blurry");
 }
 
-function registerBirthday() {
+function registerBirthday(): void {
     if (!Dom.Dialog.name_input.value || !Dom.Dialog.date_input.value) {
         void displayNotification("Incomplete...")
         return;
@@ -31,11 +32,11 @@ function registerBirthday() {
     void displayNotification("Saved!");
 }
 
-function getBirthdays() {
+function getBirthdays(): void {
     // todo
 }
 
-function saveBirthday() {
+function saveBirthday(): void {
     // todo
 }
 
@@ -44,10 +45,14 @@ function updateHeader(): void {
     Dom.Header.title.innerHTML = months[date.getMonth()] + " " + date.getDate();
 }
 
-async function displayNotification(text: string) {  // todo deal with this being a bit wonky
+async function displayNotification(text: string): Promise<void> {
     Dom.Header.title.innerHTML = text;
-    await new Promise(r => setTimeout(r, 2000));
-    updateHeader();
+    const local_notif_promise = new Promise(r => setTimeout(r, 1500));
+    global_notif_promise = local_notif_promise;
+    await local_notif_promise;
+    if (global_notif_promise === local_notif_promise) {  // checking if the function "owns" the notification
+        updateHeader()                                   // to avoid the title bar flashing when spamming notifications
+    }
 }
 
 function renderCalendar(date: Date, show_next_month?: boolean): void {
