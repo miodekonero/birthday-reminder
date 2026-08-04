@@ -57,18 +57,19 @@ function registerBirthday(): void {
 
 function renderCalendar(show_next_month?: boolean): void {
     last_date = new Date;
-    if (show_next_month) { last_date.setMonth(last_date.getMonth()+1) }
-    const offset = calculateOffset(last_date);
+    const date = structuredClone(last_date);
+    if (show_next_month) { date.setMonth(date.getMonth()+1) }
+    const offset = calculateOffset(date);
     while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     let row = document.createElement("tr");
     for (let index = 0; index < offset; index++) { row.append(document.createElement("td")) }
-    for (let index = 1; index <= getDaysInMonth(last_date); index++) {
+    for (let index = 1; index <= getDaysInMonth(date); index++) {
         let cell = document.createElement("td");
         cell.innerHTML = index.toString();
         if (((offset + index - 1) % 7) > 4) {
             cell.classList.add("weekend")
         }
-        const is_today = !show_next_month && last_date.getDate() == index;
+        const is_today = !show_next_month && date.getDate() == index;
         const birthdays = [];  // todo
         if (birthdays.length) {
             cell.addEventListener("mouseover", () => HeaderInterface.set("TODO"));  // todo
