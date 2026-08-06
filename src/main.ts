@@ -3,6 +3,7 @@
 // todo get better at TypeScript..
 
 import * as Dom from "./dom.ts";
+import * as Storage from "./storage.ts";
 import { getDaysInMonth, calculateOffset, months } from "./date.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
@@ -44,15 +45,15 @@ function toggleDialog(): void {
     Dom.Footer.footer.classList.toggle("blurry");
 }
 
-function registerBirthday(): void {
+function submitBirthday(): void {
     if (!Dom.Dialog.name_input.value || !Dom.Dialog.date_input.value) {
         void HeaderInterface.notify("Invalid...")
         return;
     }
+    Storage.saveBirthday();
     Dom.Dialog.name_input.value = "";
     Dom.Dialog.date_input.value = "";
     void HeaderInterface.notify("Saved!");
-    // todo
 }
 
 function renderCalendar(show_next_month?: boolean): void {
@@ -70,7 +71,7 @@ function renderCalendar(show_next_month?: boolean): void {
             cell.classList.add("weekend")
         }
         const is_today = !show_next_month && date.getDate() == index;
-        const birthdays = [];  // todo
+        const birthdays = []; // todo
         if (birthdays.length) {
             cell.addEventListener("mouseover", () => HeaderInterface.set("TODO"));  // todo
             cell.addEventListener("mouseleave", HeaderInterface.reset);
@@ -101,7 +102,7 @@ Dom.Header.close_button     .addEventListener("click", window.close);
 Dom.Header.add_button       .addEventListener("click", toggleDialog);
 Dom.Footer.this_month_button.addEventListener("click", switchMonthSelection)
 Dom.Footer.next_month_button.addEventListener("click", switchMonthSelection)
-Dom.Dialog.submit_button    .addEventListener("click", registerBirthday)
+Dom.Dialog.submit_button    .addEventListener("click", submitBirthday)
 
 renderCalendar()
 HeaderInterface.reset()

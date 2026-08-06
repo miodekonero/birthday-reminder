@@ -2,7 +2,7 @@
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "birthday-reminder",
   "version": "0.1.0",
-  "identifier": "com.maksy.birthday-reminder",
+  "identifier": "birthday-reminder",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
