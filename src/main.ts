@@ -2,7 +2,7 @@
 
 import * as Dom from "./dom.ts";
 import * as Storage from "./storage.ts";
-import { getDaysInMonth, calculateOffset, months } from "./date.ts";
+import * as DateManipulation from "./date.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const window = getCurrentWindow();
@@ -18,7 +18,7 @@ namespace HeaderInterface {
     }
 
     export function reset(): void {
-        set(months[last_date.getMonth()] + " " + last_date.getDate());
+        set(DateManipulation.months[last_date.getMonth()] + " " + last_date.getDate());
         Dom.Header.title.classList.remove("highlight");
     }
 
@@ -63,38 +63,46 @@ function submitBirthday(): void {
     renderCalendar(Dom.Footer.next_month_button.classList.contains("selected"));
 }
 
-function renderCalendar(show_next_month?: boolean): void {  // todo improve readability of this ugly amalgam
+function renderCalendar(show_next_month?: boolean): void {
     last_date = new Date;
     const date = structuredClone(last_date);
     if (show_next_month) { date.setMonth(date.getMonth()+1) }
-    const offset = calculateOffset(date);
+
+    const offset = DateManipulation.calculateOffset(date);
     const birthdays_this_month = Storage.getBirthdaysInMonth(date.getMonth());
-    while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     let row = document.createElement("tr");
+
+    while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     for (let index = 0; index < offset; index++) { row.append(document.createElement("td")) }
-    for (let index = 1; index <= getDaysInMonth(date); index++) {
+
+    for (let index = 1; index <= DateManipulation.getDaysInMonth(date); index++) {
         let cell = document.createElement("td");
         cell.innerHTML = index.toString();
         if (((offset + index - 1) % 7) > 4) {
             cell.classList.add("weekend")
         }
+
         const is_today = !show_next_month && date.getDate() == index;
-        const birthdays = birthdays_this_month.filter((birthday) => birthday.day === index);
+        const birthdays = birthdays_this_month.filter(birthday => birthday.day === index);
+
         if (birthdays.length) {
             cell.addEventListener("mouseover", () => HeaderInterface.set(
                 birthdays.map((birthday) => birthday.name).join(", ")
             ));
             cell.addEventListener("mouseleave", HeaderInterface.reset);
         }
+
         if (is_today && birthdays.length) { cell.classList.add("highlight-gradient") }
         else if (is_today) { cell.classList.add("highlight") }
         else if (birthdays.length) { cell.classList.add("gradient") }
+
         row.append(cell);
         if ((offset + index) % 7 === 0) {
             Dom.calendar.append(row);
             row = document.createElement("tr");
         }
     }
+
     if (row.children) { Dom.calendar.append(row) }
 }
 

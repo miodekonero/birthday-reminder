@@ -145,7 +145,7 @@ dialog button:hover {
   color: var(--selected-text-color);
   cursor: pointer
 }
-body section#calendar.blurry, body footer.blurry {
+.blurry {
   filter: blur(1px);
   pointer-events: none;
 }
