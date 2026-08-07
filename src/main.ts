@@ -1,6 +1,4 @@
-// todo dialog for showing birthdays in a given day
 // todo error handling.. lots of it
-// todo get better at TypeScript..
 
 import * as Dom from "./dom.ts";
 import * as Storage from "./storage.ts";
@@ -16,15 +14,18 @@ namespace HeaderInterface {
 
     export function set(text: string): void {
         Dom.Header.title.innerHTML = text;
+        Dom.Header.title.classList.add("highlight");
     }
 
     export function reset(): void {
         set(months[last_date.getMonth()] + " " + last_date.getDate());
+        Dom.Header.title.classList.remove("highlight");
     }
 
     export async function notify(text: string): Promise<void> {
         const notification = new Promise(_ => setTimeout(_, notification_time));
         set(text);
+        Dom.Header.title.classList.add("highlight");
         last_notification = notification;
         await notification;
         if (last_notification === notification) {
@@ -50,17 +51,24 @@ function submitBirthday(): void {
         void HeaderInterface.notify("Invalid...")
         return;
     }
-    Storage.saveBirthday();
+    const date = new Date(Dom.Dialog.date_input.value);
+    Storage.saveBirthday({
+        day: date.getDate(),
+        month: date.getMonth(),
+        name: Dom.Dialog.name_input.value
+    });
     Dom.Dialog.name_input.value = "";
     Dom.Dialog.date_input.value = "";
     void HeaderInterface.notify("Saved!");
+    renderCalendar(Dom.Footer.next_month_button.classList.contains("selected"));
 }
 
-function renderCalendar(show_next_month?: boolean): void {
+function renderCalendar(show_next_month?: boolean): void {  // todo improve readability of this ugly amalgam
     last_date = new Date;
     const date = structuredClone(last_date);
     if (show_next_month) { date.setMonth(date.getMonth()+1) }
     const offset = calculateOffset(date);
+    const birthdays_this_month = Storage.getBirthdaysInMonth(date.getMonth());
     while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     let row = document.createElement("tr");
     for (let index = 0; index < offset; index++) { row.append(document.createElement("td")) }
@@ -71,16 +79,16 @@ function renderCalendar(show_next_month?: boolean): void {
             cell.classList.add("weekend")
         }
         const is_today = !show_next_month && date.getDate() == index;
-        const birthdays = []; // todo
+        const birthdays = birthdays_this_month.filter((birthday) => birthday.day === index);
         if (birthdays.length) {
-            cell.addEventListener("mouseover", () => HeaderInterface.set("TODO"));  // todo
+            cell.addEventListener("mouseover", () => HeaderInterface.set(
+                birthdays.map((birthday) => birthday.name).join(", ")
+            ));
             cell.addEventListener("mouseleave", HeaderInterface.reset);
         }
-
         if (is_today && birthdays.length) { cell.classList.add("highlight-gradient") }
         else if (is_today) { cell.classList.add("highlight") }
         else if (birthdays.length) { cell.classList.add("gradient") }
-
         row.append(cell);
         if ((offset + index) % 7 === 0) {
             Dom.calendar.append(row);

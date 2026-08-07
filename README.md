@@ -1,4 +1,6 @@
 # Birthday reminder
-_Built using Tauri, Rust and Typescript_
+A minimalistic webview calendar for keeping track of birthdays. Built in TypeScript via Tauri.
 
-Incomplete for now. Got to add the rust backend, but the UI is mostly complete (see: todos in main.ts)
+## Screenshots:
+![](/screenshots/main.png)
+![](/screenshots/dialog.PNG)
