@@ -1,8 +1,7 @@
 // todo error handling.. lots of it
 
 import * as Dom from "./dom.ts";
-import * as Storage from "./storage.ts";
-import * as DateManipulation from "./date.ts";
+import * as Dates from "./date.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const window = getCurrentWindow();
@@ -18,7 +17,7 @@ namespace HeaderInterface {
     }
 
     export function reset(): void {
-        set(DateManipulation.months[last_date.getMonth()] + " " + last_date.getDate());
+        set(Dates.month_name[last_date.getMonth()] + " " + last_date.getDate());
         Dom.Header.title.classList.remove("highlight");
     }
 
@@ -47,18 +46,24 @@ function toggleDialog(): void {
 }
 
 function submitBirthday(): void {
-    if (!Dom.Dialog.name_input.value || !Dom.Dialog.date_input.value) {
+    const parsed_month = parseInt(Dom.Dialog.month_input.value);
+    const parsed_day = parseInt(Dom.Dialog.day_input.value);
+    const days_in_month = Dates.getDaysInMonth(new Date(Dates.epoch, parsed_month));
+    if (
+        !Dom.Dialog.name_input.value || !Dom.Dialog.name_input.value || !Dom.Dialog.month_input.value ||
+        parsed_month < 1 || parsed_month > 12 ||
+        parsed_day < 1 || parsed_day > days_in_month
+    ) {
         void HeaderInterface.notify("Invalid...")
         return;
     }
-    const date = new Date(Dom.Dialog.date_input.value);
-    Storage.saveBirthday({
-        day: date.getDate(),
-        month: date.getMonth(),
+    Dates.saveBirthday({
+        date: new Date(Dates.epoch, parsed_month-1, parsed_day),
         name: Dom.Dialog.name_input.value
     });
     Dom.Dialog.name_input.value = "";
-    Dom.Dialog.date_input.value = "";
+    Dom.Dialog.day_input.value = "";
+    Dom.Dialog.month_input.value = "";
     void HeaderInterface.notify("Saved!");
     renderCalendar(Dom.Footer.next_month_button.classList.contains("selected"));
 }
@@ -68,14 +73,14 @@ function renderCalendar(show_next_month?: boolean): void {
     const date = structuredClone(last_date);
     if (show_next_month) { date.setMonth(date.getMonth()+1) }
 
-    const offset = DateManipulation.calculateOffset(date);
-    const birthdays_this_month = Storage.getBirthdaysInMonth(date.getMonth());
+    const offset = Dates.calculateOffset(date);
+    const birthdays_this_month = Dates.getBirthdaysInMonth(date.getMonth());
     let row = document.createElement("tr");
 
     while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     for (let index = 0; index < offset; index++) { row.append(document.createElement("td")) }
 
-    for (let index = 1; index <= DateManipulation.getDaysInMonth(date); index++) {
+    for (let index = 1; index <= Dates.getDaysInMonth(date); index++) {
         let cell = document.createElement("td");
         cell.innerHTML = index.toString();
         if (((offset + index - 1) % 7) > 4) {
@@ -83,7 +88,7 @@ function renderCalendar(show_next_month?: boolean): void {
         }
 
         const is_today = !show_next_month && date.getDate() == index;
-        const birthdays = birthdays_this_month.filter(birthday => birthday.day === index);
+        const birthdays = birthdays_this_month.filter(birthday => birthday.date.getDay() === index);
 
         if (birthdays.length) {
             cell.addEventListener("mouseover", () => HeaderInterface.set(

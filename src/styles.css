@@ -138,7 +138,7 @@ dialog button {
   font-family: inherit;
   font-size: inherit;
   padding: 0;
-  margin: 10px auto 0 auto;
+  margin: 2px 0 0 auto;
   display: block
 }
 dialog button:hover {

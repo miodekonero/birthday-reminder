@@ -3,7 +3,8 @@ const id = (content: string) => document.getElementById(content);
 export namespace Dialog {
     export const dialog            = id("dialog")! as HTMLDialogElement;
     export const name_input        = id("dialog-name")! as HTMLInputElement;
-    export const date_input        = id("dialog-date")! as HTMLInputElement;
+    export const day_input         = id("dialog-day")! as HTMLInputElement;
+    export const month_input       = id("dialog-month")! as HTMLInputElement;
     export const submit_button     = id("dialog-button")! as HTMLButtonElement;
 }
 
