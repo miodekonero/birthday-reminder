@@ -16,6 +16,7 @@
     "fs:allow-exists",
     "fs:allow-write",
     "fs:allow-create",
-    "fs:allow-mkdir"
+    "fs:allow-mkdir",
+    "dialog:default"
   ]
 }

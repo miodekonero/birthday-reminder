@@ -1,5 +1,3 @@
-// todo error handling.. lots of it
-
 import * as Dom from "./dom.ts";
 import * as Dates from "./date.ts";
 import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -51,8 +49,8 @@ function submitBirthday(): void {
     const days_in_month = Dates.getDaysInMonth(new Date(Dates.epoch, parsed_month));
     if (
         !Dom.Dialog.name_input.value || !Dom.Dialog.name_input.value || !Dom.Dialog.month_input.value ||
-        parsed_month < 1 || parsed_month > 12 ||
-        parsed_day < 1 || parsed_day > days_in_month
+        parsed_month < 1             || parsed_month > 12            ||
+        parsed_day < 1               || parsed_day > days_in_month
     ) {
         void HeaderInterface.notify("Invalid...")
         return;
