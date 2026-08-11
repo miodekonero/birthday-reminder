@@ -16,8 +16,8 @@ Add birthdays by clicking the `[+]` button. Once there are any birthdays in the 
 
 Birthdays are saved locally in `%appdata%/birthday-reminder/birthdays.data`. Each line is one entry, stored in the format `[day] [month] [name]`- separated by spaces - where:
 - **Each day** is an integer
-- **Each month** is a roman numeral 1 through 12
-- **Each name** is a regular string: they can contain spaces, and it's not recommended for them to be over 16 characters long, but it is permitted.
+- **Each month** is a roman numeral 1 through 12, either uppercase or lowercase
+- **Each name** is a regular string: they can contain spaces, and it's recommended for them to be under 16 characters.
 ## Screenshots
 ![](/screenshots/main.png)
 ![](/screenshots/dialog.png)
