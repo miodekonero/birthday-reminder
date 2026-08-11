@@ -55,10 +55,7 @@ function submitBirthday(): void {
         void HeaderInterface.notify("Invalid...")
         return;
     }
-    Dates.saveBirthday({
-        date: new Date(Dates.epoch, parsed_month-1, parsed_day),
-        name: Dom.Dialog.name_input.value
-    });
+    Dates.saveBirthday(parsed_month-1, parsed_day, Dom.Dialog.name_input.value);
     Dom.Dialog.name_input.value = "";
     Dom.Dialog.day_input.value = "";
     Dom.Dialog.month_input.value = "";
@@ -72,25 +69,24 @@ function renderCalendar(show_next_month?: boolean): void {
     if (show_next_month) { date.setMonth(date.getMonth()+1) }
 
     const offset = Dates.calculateOffset(date);
-    const birthdays_this_month = Dates.getBirthdaysInMonth(date.getMonth());
     let row = document.createElement("tr");
 
     while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     for (let index = 0; index < offset; index++) { row.append(document.createElement("td")) }
 
+    console.log(date.getMonth(), date.getDate())
     for (let index = 1; index <= Dates.getDaysInMonth(date); index++) {
+        const is_today = !show_next_month && date.getDate() == index;
+        const birthdays = Dates.getBirthdays(date.getMonth(), index);
         let cell = document.createElement("td");
         cell.innerHTML = index.toString();
         if (((offset + index - 1) % 7) > 4) {
             cell.classList.add("weekend")
         }
 
-        const is_today = !show_next_month && date.getDate() == index;
-        const birthdays = birthdays_this_month.filter(birthday => birthday.date.getDay() === index);
-
         if (birthdays.length) {
             cell.addEventListener("mouseover", () => HeaderInterface.set(
-                birthdays.map((birthday) => birthday.name).join(", ")
+                birthdays.join(", ")
             ));
             cell.addEventListener("mouseleave", HeaderInterface.reset);
         }

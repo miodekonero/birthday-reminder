@@ -5,12 +5,7 @@ export const month_name = ["January", "February", "March", "April", "May", "June
 export const epoch = 1970;
 const month_roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
 const filename = "birthdays.data";
-const birthdays: Birthday[] = [];  // todo maybe more efficient way of storage and access, perhaps a rust integration?
-
-export interface Birthday {
-    date: Date;
-    name: string;
-}
+let birthdays: string[][][] = Array.from({ length: 12 }, () => Array.from({ length: 31 }, () => []))
 
 async function error(error_message: string): Promise<void> {
     await message(
@@ -34,13 +29,15 @@ export function calculateOffset(date: Date): number {
     return weekday === 0 ? 0 : weekday - 1
 }
 
-export function saveBirthday(birthday: Birthday): void {
-    birthdays.push(birthday);
-    void file.write(new TextEncoder().encode(`${birthday.date.getDate()} ${month_roman[birthday.date.getMonth()]} ${birthday.name}\n`));  // todo error handling?
+export function saveBirthday(month: number, day: number, name: string, save_to_file?: boolean): void {
+    if (save_to_file !== false) {
+        void file.write(new TextEncoder().encode(`${day} ${month_roman[month]} ${name}\n`));
+    }
+    birthdays[month][day-1].push(name);
 }
 
-export function getBirthdaysInMonth(month: number): Birthday[] {
-    return birthdays.filter((birthday) => birthday.date.getMonth() === month)
+export function getBirthdays(month: number, day: number): string[] {
+    return birthdays[month][day-1]
 }
 // its kinda annoying that some function use month as number, some month as date todo make up my mind
 
@@ -76,7 +73,8 @@ for await (const line of await readTextFileLines(filename, { baseDir: BaseDirect
         continue;
     }
 
-    birthdays.push({ date: date, name: birthday_raw.slice(2).join(" ") })
+    saveBirthday(month, day, birthday_raw.slice(2).join(" "), false);
 }
 
-let file = await open(filename, { baseDir: BaseDirectory.AppData, append: true })
+let file = await open(filename, { baseDir: BaseDirectory.AppData, append: true });
+console.log(birthdays)
