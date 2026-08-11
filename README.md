@@ -15,9 +15,9 @@ Navigate the calendar by switching between the `This month` and `Next month` but
 Add birthdays by clicking the `[+]` button. Once there are any birthdays in the selected month, they will be marked by the gradient - hover on the date, to see whose birthday is it.
 
 Birthdays are saved locally in `%appdata%/birthday-reminder/birthdays.data`. Each line is one entry, stored in the format `[day] [month] [name]`- separated by spaces - where:
-- Each day is an integer
-- Each month is a roman numeral 1 through 12
-- Each name is a regular string (can contain spaces)
+- **Each day** is an integer
+- **Each month** is a roman numeral 1 through 12
+- **Each name** is a regular string: they can contain spaces, and it's not recommended for them to be over 16 characters long, but it is permitted.
 ## Screenshots
 ![](/screenshots/main.png)
 ![](/screenshots/dialog.png)

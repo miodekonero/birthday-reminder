@@ -85,9 +85,14 @@ function renderCalendar(show_next_month?: boolean): void {
         }
 
         if (birthdays.length) {
-            cell.addEventListener("mouseover", () => HeaderInterface.set(
-                birthdays.join(", ")
-            ));
+            const birthdays_string = birthdays.join(", ");
+            if (birthdays_string.length > 16) {
+                cell.addEventListener("mouseover", () => HeaderInterface.set("..."));
+                cell.setAttribute("title", birthdays_string)
+            }
+            else {
+                cell.addEventListener("mouseover", () => HeaderInterface.set(birthdays_string));
+            }
             cell.addEventListener("mouseleave", HeaderInterface.reset);
         }
 
