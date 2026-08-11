@@ -46,7 +46,7 @@ function toggleDialog(): void {
 function submitBirthday(): void {
     const parsed_month = parseInt(Dom.Dialog.month_input.value);
     const parsed_day = parseInt(Dom.Dialog.day_input.value);
-    const days_in_month = Dates.getDaysInMonth(new Date(Dates.epoch, parsed_month));
+    const days_in_month = Dates.getDaysInMonth(parsed_month);
     if (
         !Dom.Dialog.name_input.value || !Dom.Dialog.name_input.value || !Dom.Dialog.month_input.value ||
         parsed_month < 1             || parsed_month > 12            ||
@@ -55,7 +55,7 @@ function submitBirthday(): void {
         void HeaderInterface.notify("Invalid...")
         return;
     }
-    Dates.saveBirthday(parsed_month-1, parsed_day, Dom.Dialog.name_input.value);
+    Dates.saveBirthday(parsed_day, parsed_month-1, Dom.Dialog.name_input.value);
     Dom.Dialog.name_input.value = "";
     Dom.Dialog.day_input.value = "";
     Dom.Dialog.month_input.value = "";
@@ -68,16 +68,16 @@ function renderCalendar(show_next_month?: boolean): void {
     const date = structuredClone(last_date);
     if (show_next_month) { date.setMonth(date.getMonth()+1) }
 
-    const offset = Dates.calculateOffset(date);
+    const offset = Dates.calculateOffset(date.getMonth(), date.getFullYear());
     let row = document.createElement("tr");
 
     while (Dom.calendar.firstChild) { Dom.calendar.removeChild(Dom.calendar.firstChild) }
     for (let index = 0; index < offset; index++) { row.append(document.createElement("td")) }
 
     console.log(date.getMonth(), date.getDate())
-    for (let index = 1; index <= Dates.getDaysInMonth(date); index++) {
+    for (let index = 1; index <= Dates.getDaysInMonth(date.getMonth(), date.getFullYear()); index++) {
         const is_today = !show_next_month && date.getDate() == index;
-        const birthdays = Dates.getBirthdays(date.getMonth(), index);
+        const birthdays = Dates.getBirthdays(index, date.getMonth());
         let cell = document.createElement("td");
         cell.innerHTML = index.toString();
         if (((offset + index - 1) % 7) > 4) {
