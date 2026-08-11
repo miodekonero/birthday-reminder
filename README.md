@@ -9,7 +9,11 @@ npm run tauri build
 Get the executable from the releases tab. The program can be stored and launched from any directory.
 ## Usage
 Add birthdays by clicking the `[+]` button. Once there are any birthdays in the selected month, they will be marked by the gradient - hover on the date, to see whose birthday is it.
-Birthdays are saved locally in `%appdata%/birthday-reminder/birthdays.data`. Modifying this file isn't recommended, as error handling isn't implemented at this moment.
+
+Birthdays are saved locally in `%appdata%/birthday-reminder/birthdays.data`. Each line is one entry, stored in the format `[day] [month] [name]`- separated by spaces - where:
+- Each day is an integer
+- Each month is a roman numeral 1 through 12
+- Each day is a regular string (can contain spaces)
 ## Screenshots
 ![](/screenshots/main.png)
 ![](/screenshots/dialog.png)

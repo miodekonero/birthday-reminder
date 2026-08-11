@@ -58,8 +58,12 @@ for await (const line of await readTextFileLines(filename, { baseDir: BaseDirect
     const month = month_roman.findIndex(numeral => numeral === birthday_raw[1].toUpperCase());
     const day = parseInt(birthday_raw[0]);
     const date = new Date(epoch, month, day);
-
-    if (month === -1) {
+    
+    if (birthday_raw.length < 3) {
+        await error("an entry must consist of a day, a month in roman numerals, and a name, separated by spaces");
+        continue
+    }
+    else if (month === -1) {
         await error("incorrect month");
         continue;
     }
@@ -72,10 +76,7 @@ for await (const line of await readTextFileLines(filename, { baseDir: BaseDirect
         continue;
     }
 
-    birthdays.push({
-        date: date,
-        name: birthday_raw.slice(2).join(" ")
-    })
+    birthdays.push({ date: date, name: birthday_raw.slice(2).join(" ") })
 }
 
 let file = await open(filename, { baseDir: BaseDirectory.AppData, append: true })
